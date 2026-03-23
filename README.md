@@ -26,7 +26,7 @@ claude-tidy --version    # 版本号
 | **list** | 查看 rules/skills，支持全局/项目/全部，全部时分开展示 |
 | **diff** | 对比全局和项目的同名 rules/skills，标注最新版本，选择保留哪个 |
 | **move** | 在全局和项目之间移动 rules/skills，symlink 保持链接方式 |
-| **delete** | 删除 rules（直接删除）或 skills（确认后整目录删除） |
+| **delete** | 删除 rules 或 skills，确认后删除（skills 整目录删除） |
 
 ## 特性
 

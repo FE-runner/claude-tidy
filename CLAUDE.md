@@ -13,7 +13,7 @@ claude-tidy 是一个纯交互式 CLI 工具，用于管理 Claude Code 的 skil
 | list | 列出 rules 或 skills，区分全局/项目级，显示触发方式和修改时间，symlink 标注 `[链接]` |
 | diff | 对比全局 vs 项目的同名 rules/skills，标注最新版本（取 birthtime 和 mtime 较晚者），多选后逐个选保留哪个 |
 | move | 在全局和项目之间移动 rules/skills（多选，a 键全选），symlink 源创建 symlink 目标，完成后可选删除源文件 |
-| delete | 删除 rules（多选直接删除）或 skills（多选后二次确认，整目录删除） |
+| delete | 删除 rules 或 skills（多选后二次确认，rules 直接删除文件，skills 整目录删除） |
 
 ## 交互流程
 

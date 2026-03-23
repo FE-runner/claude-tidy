@@ -45,6 +45,22 @@ async function deleteRulesFlow(): Promise<void> {
 
   if (selected.length === 0) return;
 
+  console.log(chalk.yellow('\n  将删除以下 rules：'));
+  for (const filePath of selected) {
+    const rule = rules.find((r) => r.absolutePath === filePath)!;
+    console.log(`    ${chalk.bold(rule.id)}  ${chalk.dim(filePath)}`);
+  }
+
+  const confirmed = await confirm({
+    message: `确认删除 ${selected.length} 条 rules？`,
+    default: false,
+  });
+
+  if (!confirmed) {
+    console.log(chalk.dim('  已取消'));
+    return;
+  }
+
   for (const filePath of selected) {
     fs.unlinkSync(filePath);
   }
