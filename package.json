@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "tsc && node dist/cli.js",
     "build": "tsc",
+    "test": "echo \"No tests yet\"",
     "start": "node dist/cli.js",
     "release": "bash ./scripts/release.sh"
   },
