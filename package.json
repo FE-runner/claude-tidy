@@ -1,6 +1,6 @@
 {
   "name": "claude-tidy",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Claude Code 的 skills 和 rules 管理工具",
   "type": "module",
   "bin": {
