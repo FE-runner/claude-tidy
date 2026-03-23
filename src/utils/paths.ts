@@ -16,6 +16,11 @@ export function getGlobalSkillsDir(): string {
   return path.join(os.homedir(), '.claude', 'skills');
 }
 
+/** 项目 skills 目录：.claude/skills/ （基于 cwd） */
+export function getProjectSkillsDir(): string {
+  return path.join(process.cwd(), '.claude', 'skills');
+}
+
 /**
  * 从绝对路径计算相对于 rules 根目录的标识符
  * 例如：~/.claude/rules/react/core.md → react/core.md

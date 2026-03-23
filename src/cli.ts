@@ -3,10 +3,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listCommand } from './commands/list.js';
-import { diffCommand } from './commands/diff.js';
-import { moveCommand } from './commands/move.js';
-import { removeCommand } from './commands/remove.js';
+import { select } from '@inquirer/prompts';
+import chalk from 'chalk';
+import { listFlow } from './flows/list.js';
+import { diffFlow } from './flows/diff.js';
+import { moveFlow } from './flows/move.js';
+import { deleteFlow } from './flows/delete.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -21,24 +23,15 @@ const HELP_TEXT = `
 claude-tidy — Claude Code 的 skills 和 rules 管理工具
 
 用法:
-  claude-tidy <命令> [参数]
-
-命令:
-  list [rules|skills]           列出 rules 或 skills
-  diff [rule-id]                比对全局和项目 rules 差异
-  move <rule-id> --to <scope>   移动/复制 rule（scope: global | project）
-  remove <rule-id|skill-name>   删除 rule 或 skill
-
-选项:
-  --help, -h      显示帮助信息
-  --version, -v   显示版本号
+  claude-tidy              进入交互式管理流程
+  claude-tidy --help       显示帮助信息
+  claude-tidy --version    显示版本号
 `;
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
-  // 全局选项
-  if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+  if (args.includes('--help') || args.includes('-h')) {
     console.log(HELP_TEXT.trim());
     return;
   }
@@ -48,27 +41,50 @@ async function main(): Promise<void> {
     return;
   }
 
-  const command = args[0];
-  const commandArgs = args.slice(1);
+  if (args.length > 0) {
+    console.log(HELP_TEXT.trim());
+    return;
+  }
 
-  switch (command) {
+  console.log(`
+  ${chalk.bold.cyan('claude-tidy')}  ${chalk.dim('v' + getVersion())}
+  ${chalk.dim('Claude Code skills & rules 管理工具')}
+  `);
+
+  const target = await select({
+    message: '管理什么？',
+    choices: [
+      { value: 'skills', name: 'skills' },
+      { value: 'rules', name: 'rules' },
+    ],
+  });
+
+  const action = await select({
+    message: '要做什么？',
+    choices: [
+      { value: 'list', name: 'list    — 查看' },
+      { value: 'diff', name: 'diff    — 比对差异' },
+      { value: 'move', name: 'move    — 移动' },
+      { value: 'delete', name: 'delete  — 删除' },
+    ],
+  });
+
+  switch (action) {
     case 'list':
-      await listCommand(commandArgs);
+      await listFlow(target);
       break;
     case 'diff':
-      await diffCommand(commandArgs);
+      await diffFlow(target);
       break;
     case 'move':
-      await moveCommand(commandArgs);
+      await moveFlow(target);
       break;
-    case 'remove':
-      await removeCommand(commandArgs);
+    case 'delete':
+      await deleteFlow(target);
       break;
-    default:
-      console.error(`未知命令: ${command}`);
-      console.log(HELP_TEXT.trim());
-      process.exit(1);
   }
+
+  console.log(chalk.green('\n  完成\n'));
 }
 
 main().catch((error: unknown) => {

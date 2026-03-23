@@ -5,6 +5,15 @@ import { toRuleId } from './paths.js';
 import { parseRuleFrontmatter } from './parser.js';
 
 /**
+ * 取文件的实际最新时间（创建时间和修改时间中较晚的）
+ * 解决复制文件时 mtime 被保留但 birthtime 是新的问题
+ */
+export function getLatestTime(filePath: string): Date {
+  const stat = fs.statSync(filePath);
+  return stat.birthtime.getTime() > stat.mtime.getTime() ? stat.birthtime : stat.mtime;
+}
+
+/**
  * 递归扫描目录下所有 .md 文件
  */
 function walkMdFiles(dir: string): string[] {
@@ -34,7 +43,6 @@ export function scanRules(rulesDir: string, scope: RuleScope): Rule[] {
   return files.map((filePath) => {
     const content = fs.readFileSync(filePath, 'utf-8');
     const { description, trigger } = parseRuleFrontmatter(content);
-    const stat = fs.statSync(filePath);
 
     return {
       id: toRuleId(filePath, rulesDir),
@@ -42,7 +50,7 @@ export function scanRules(rulesDir: string, scope: RuleScope): Rule[] {
       scope,
       description,
       trigger,
-      mtime: stat.mtime,
+      mtime: getLatestTime(filePath),
     };
   });
 }
@@ -51,34 +59,45 @@ export function scanRules(rulesDir: string, scope: RuleScope): Rule[] {
  * 递归扫描 skills 目录
  * 以 SKILL.md 存在作为 skill 根目录的标志
  */
-export function scanSkills(skillsDir: string): Skill[] {
+export function scanSkills(skillsDir: string, scope: RuleScope): Skill[] {
   if (!fs.existsSync(skillsDir)) return [];
 
   const skills: Skill[] = [];
-  scanSkillsRecursive(skillsDir, skills);
+  scanSkillsRecursive(skillsDir, scope, skills);
   return skills;
 }
 
-function scanSkillsRecursive(dir: string, results: Skill[]): void {
+function scanSkillsRecursive(dir: string, scope: RuleScope, results: Skill[]): void {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-
     const fullPath = path.join(dir, entry.name);
+
+    // 用 statSync 跟踪 symlink，判断目标是否是目录
+    let isDir: boolean;
+    try {
+      isDir = fs.statSync(fullPath).isDirectory();
+    } catch {
+      continue;
+    }
+    if (!isDir) continue;
     const skillMdPath = path.join(fullPath, 'SKILL.md');
 
     if (fs.existsSync(skillMdPath)) {
-      // 找到一个 skill，计算文件数量
       const fileCount = countFiles(fullPath);
+      const isSymlink = fs.lstatSync(fullPath).isSymbolicLink();
+      const symlinkTarget = isSymlink ? fs.readlinkSync(fullPath) : undefined;
       results.push({
         name: entry.name,
         absolutePath: fullPath,
         fileCount,
+        scope,
+        isSymlink,
+        symlinkTarget,
       });
     } else {
       // 不是 skill 根目录，继续递归（处理 skills/skills/ 嵌套）
-      scanSkillsRecursive(fullPath, results);
+      scanSkillsRecursive(fullPath, scope, results);
     }
   }
 }
@@ -92,9 +111,15 @@ function countFiles(dir: string): number {
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
+    let stat: fs.Stats;
+    try {
+      stat = fs.statSync(fullPath);
+    } catch {
+      continue;
+    }
+    if (stat.isDirectory()) {
       count += countFiles(fullPath);
-    } else if (entry.isFile()) {
+    } else if (stat.isFile()) {
       count++;
     }
   }

@@ -31,6 +31,12 @@ export interface Skill {
   absolutePath: string;
   /** 包含的文件总数 */
   fileCount: number;
+  /** 作用域 */
+  scope: RuleScope;
+  /** 是否是 symlink */
+  isSymlink: boolean;
+  /** symlink 目标路径（仅 isSymlink 为 true 时有值） */
+  symlinkTarget: string | undefined;
 }
 
 /** diff 总览表中的一行 */

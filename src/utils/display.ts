@@ -2,14 +2,15 @@ import chalk from 'chalk';
 import type { Rule, Skill, DiffSummaryItem } from '../types.js';
 
 /**
- * 格式化日期为简短格式
+ * 格式化日期为简短格式（精确到秒）
  */
-function formatDate(date: Date): string {
+export function formatDate(date: Date): string {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${month}月${day}日 ${hours}:${minutes}`;
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${month}月${day}日 ${hours}:${minutes}:${seconds}`;
 }
 
 /**
@@ -65,17 +66,22 @@ export function printRules(rules: Rule[], showScope: boolean): void {
 /**
  * 打印 skills 列表
  */
-export function printSkills(skills: Skill[]): void {
+export function printSkills(skills: Skill[], showScope: boolean): void {
   if (skills.length === 0) {
     console.log(chalk.dim('未找到 skills'));
     return;
   }
 
-  console.log(chalk.bold('名称\t路径\t文件数'));
+  const headers = showScope ? ['名称', '作用域', '路径', '文件数'] : ['名称', '路径', '文件数'];
+  console.log(chalk.bold(headers.join('\t')));
   console.log(chalk.dim('─'.repeat(80)));
 
   for (const skill of skills) {
-    console.log(`${skill.name}\t${chalk.dim(skill.absolutePath)}\t${skill.fileCount}`);
+    const linkTag = skill.isSymlink ? chalk.cyan(' [链接]') : '';
+    const cols = showScope
+      ? [skill.name + linkTag, formatScope(skill.scope), chalk.dim(skill.absolutePath), String(skill.fileCount)]
+      : [skill.name + linkTag, chalk.dim(skill.absolutePath), String(skill.fileCount)];
+    console.log(cols.join('\t'));
   }
 
   console.log(chalk.dim(`\n共 ${skills.length} 个 skills`));
