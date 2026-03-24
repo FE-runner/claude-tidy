@@ -6,7 +6,7 @@ set -euo pipefail
 #   ./scripts/release.sh          # 交互式选择版本类型
 #   ./scripts/release.sh patch    # 直接指定
 
-REMOTE="origin"
+REMOTE="old-origin"
 BRANCH="main"
 
 # 读取当前版本
