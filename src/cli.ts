@@ -20,12 +20,12 @@ function getVersion(): string {
 }
 
 const HELP_TEXT = `
-claude-tidy — Claude Code 的 skills 和 rules 管理工具
+cc-tidy — Claude Code 的 skills 和 rules 管理工具
 
 用法:
-  claude-tidy              进入交互式管理流程
-  claude-tidy --help       显示帮助信息
-  claude-tidy --version    显示版本号
+  cc-tidy              进入交互式管理流程
+  cc-tidy --help       显示帮助信息
+  cc-tidy --version    显示版本号
 `;
 
 async function main(): Promise<void> {
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   }
 
   console.log(`
-  ${chalk.bold.cyan('claude-tidy')}  ${chalk.dim('v' + getVersion())}
+  ${chalk.bold.cyan('cc-tidy')}  ${chalk.dim('v' + getVersion())}
   ${chalk.dim('Claude Code skills & rules 管理工具')}
   `);
 

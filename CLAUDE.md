@@ -1,10 +1,10 @@
-# claude-tidy
+# cc-tidy
 
 Claude Code 的 skills 和 rules 管理工具。查看、比对、移动、删除，一个命令搞定。
 
 ## 项目概述
 
-claude-tidy 是一个纯交互式 CLI 工具，用于管理 Claude Code 的 skills（`~/.claude/skills/` + `.claude/skills/`）和 rules（`~/.claude/rules/` + `.claude/rules/`）。解决 rules/skills 散落在全局和项目级目录中难以管理的问题。
+cc-tidy 是一个纯交互式 CLI 工具，用于管理 Claude Code 的 skills（`~/.claude/skills/` + `.claude/skills/`）和 rules（`~/.claude/rules/` + `.claude/rules/`）。解决 rules/skills 散落在全局和项目级目录中难以管理的问题。
 
 ## 核心功能
 
@@ -18,7 +18,7 @@ claude-tidy 是一个纯交互式 CLI 工具，用于管理 Claude Code 的 skil
 ## 交互流程
 
 ```
-claude-tidy
+cc-tidy
   → 欢迎语（名称 + 版本 + 描述）
   → 选择: skills / rules
     → 选择: list / diff / move / delete
@@ -47,7 +47,7 @@ claude-tidy
 ## 目录结构
 
 ```
-claude-tidy/
+cc-tidy/
 ├── src/
 │   ├── cli.ts            # 入口：欢迎语 + --help/--version + 交互流程
 │   ├── flows/

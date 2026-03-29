@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# claude-tidy 发布脚本
+# cc-tidy 发布脚本
 # 用法:
 #   ./scripts/release.sh          # 交互式选择版本类型
 #   ./scripts/release.sh patch    # 直接指定
@@ -81,4 +81,4 @@ git push "$REMOTE" "v${NEW_VER}"
 
 echo ""
 echo "✓ v${NEW_VER} 已推送，GitHub Actions 将自动发布到 npm。"
-echo "查看进度: https://github.com/FE-runner/claude-tidy/actions"
+echo "查看进度: https://github.com/FE-runner/cc-tidy/actions"

@@ -1,11 +1,11 @@
-# claude-tidy
+# cc-tidy
 
 Claude Code 的 skills 和 rules 管理工具。查看、比对、移动、删除，一个命令搞定。
 
 ## 使用
 
 ```bash
-npx claude-tidy
+npx cc-tidy
 ```
 
 纯交互式，运行后按提示操作：
@@ -15,8 +15,8 @@ npx claude-tidy
 3. 跟随交互引导完成（多选列表按 `a` 全选）
 
 ```bash
-claude-tidy --help       # 帮助信息
-claude-tidy --version    # 版本号
+cc-tidy --help       # 帮助信息
+cc-tidy --version    # 版本号
 ```
 
 ## 功能
